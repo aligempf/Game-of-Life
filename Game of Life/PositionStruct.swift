@@ -52,3 +52,7 @@ func +(left: Position, right: Position) -> Position {
     }
     return Position(position: sum)
 }
+
+func ==(left: Position, right: Position) -> Bool {
+    return left.position == right.position ? true : false
+}
