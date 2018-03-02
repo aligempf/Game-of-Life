@@ -14,9 +14,27 @@ struct Position {
     let position: [Int]
     var neighbouringPositions: [Position] {
         get {
-            var neighbouring = [Position]()
+            var neighbouring = [self]
+            for dimension in 0..<position.count {
+                let currentNeighbouring = neighbouring
+                let plusOne = Position(1, at: dimension, of: self.position.count)
+                let minusOne = Position(-1, at: dimension, of: self.position.count)
+                for neighbouringPosition in currentNeighbouring {
+                    neighbouring.append(neighbouringPosition + plusOne)
+                    neighbouring.append(neighbouringPosition + minusOne)
+                }
+            }
+            neighbouring.remove(at: 0)
             return neighbouring
         }
+    }
+    init(_ dimensionLength: Int, at dimension: Int, of numberOfDimensions: Int) {
+        var position = [Int](repeating: 0, count: numberOfDimensions)
+        position[dimension] = dimensionLength
+        self.position = position
+    }
+    init(position: [Int]) {
+        self.position = position
     }
 }
 

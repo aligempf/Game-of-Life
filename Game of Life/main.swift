@@ -9,4 +9,4 @@
 let a = Position(position: [2,1])
 let b = Position(position: [1,0])
 
-print(a+b)
+print(a.neighbouringPositions)
