@@ -39,13 +39,8 @@ class Board {
                     }
                 }
             }
-            // check if cell exists, if it does, then just return cell, otherwise it's dead and should return a dead cell
-            if (cellBoard.contains(Cell(position: index))) {
-                return Cell(position: index)
-            } else if (cellBoard.contains(Cell(position: index, initState: true))) {
-                return Cell(position: index, initState: true)
-            }
-            return Cell(position: index)
+            // check if live cell exists in the set, if it does, then just return live cell, otherwise it's dead
+            return cellBoard.contains(Cell(position: index, initState: true)) ? Cell(position: index, initState: true) : Cell(position: index)
         }
         set(value) {
             for count in 0..<index.position.count {
@@ -69,6 +64,7 @@ class Board {
                 let neighbourCellTrue = Cell(position: neighbour, initState: true)
                 if !self.cellBoard.contains(neighbourCellTrue) {
                     self.cellBoard.insert(Cell(position: neighbour))
+                    // insert only adds the cell if it's not in already, so only need to check if the true case is in
                 }
             }
             cellBoard.insert(value)

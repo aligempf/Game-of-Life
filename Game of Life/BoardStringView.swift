@@ -7,7 +7,7 @@
 //
 
 func stringBoardState(for board: Board, upTo boundaries: [Int]) -> String {
-    var boardState = "Board at step " + String(board.stepNumber) + "\n"
+    var boardState = ""
     for y in (-boundaries[1]...boundaries[1]).reversed() {
         for x in -boundaries[0]...boundaries[0] {
             if board[[x,y]].state {
