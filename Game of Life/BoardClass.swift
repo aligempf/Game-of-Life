@@ -9,6 +9,7 @@
 class Board {
     let dimensions: Int
     let boundaries: [Int?]
+    let stepNumber: Int
     private var cellBoard: [Cell]
     var board: [Cell] {
         get {
@@ -88,18 +89,23 @@ class Board {
         }
     }
     
-    init(dimensions: Int, upTo boundaries: [Int?], cellBoard: [Cell] = [Cell]()) {
+    init(dimensions: Int, upTo boundaries: [Int?], cellBoard: [Cell] = [Cell](), stepNumber: Int = 0) {
         self.dimensions = dimensions
         self.cellBoard = cellBoard
         self.boundaries = boundaries
+        self.stepNumber = stepNumber
     }
     
-    convenience init(dimensions: Int, cellBoard: [Cell] = [Cell]()) {
-        self.init(dimensions: dimensions, upTo: [Int?](repeatElement(nil, count: dimensions)), cellBoard: cellBoard)
+    convenience init(dimensions: Int, cellBoard: [Cell] = [Cell](), stepNumber: Int = 0) {
+        self.init(dimensions: dimensions, upTo: [Int?](repeatElement(nil, count: dimensions)), cellBoard: cellBoard, stepNumber: stepNumber)
+    }
+    
+    convenience init(dimensions: Int, stepNumber: Int = 0) {
+        self.init(dimensions: dimensions, upTo: [Int?](repeatElement(nil, count: dimensions)), cellBoard: [Cell](), stepNumber: stepNumber)
     }
     
     func nextStep() -> Board {
-        let nextBoard = Board(dimensions: dimensions)
+        let nextBoard = Board(dimensions: dimensions, stepNumber: stepNumber+1)
         
         for cell in cellBoard {
             nextBoard[cell.position] = cell.step(from: self)
