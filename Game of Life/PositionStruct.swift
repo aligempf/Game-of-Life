@@ -10,12 +10,18 @@ enum Dimension: Int {
     case x = 0, y, z
 }
 
-struct Position {
+struct Position: Hashable {
+    var hashValue: Int
     let position: [Int]
+    var dimensions: Int {
+        get {
+            return position.count
+        }
+    }
     var neighbouringPositions: [Position] {
         get {
             var neighbouring = [self]
-            for dimension in 0..<position.count {
+            for dimension in 0..<dimensions {
                 let currentNeighbouring = neighbouring
                 let plusOne = Position(1, at: dimension, of: self.position.count)
                 let minusOne = Position(-1, at: dimension, of: self.position.count)
@@ -31,10 +37,11 @@ struct Position {
     init(_ dimensionLength: Int, at dimension: Int, of numberOfDimensions: Int) {
         var position = [Int](repeating: 0, count: numberOfDimensions)
         position[dimension] = dimensionLength
-        self.position = position
+        self.init(position: position)
     }
     init(position: [Int]) {
         self.position = position
+        self.hashValue = Set(self.position).hashValue
     }
 }
 

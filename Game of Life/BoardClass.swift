@@ -10,8 +10,8 @@ class Board {
     let dimensions: Int
     let boundaries: [Int?]
     let stepNumber: Int
-    private var cellBoard: [Cell]
-    var board: [Cell] {
+    private var cellBoard: Set<Cell>
+    var board: Set<Cell> {
         get {
             return cellBoard
         }
@@ -30,7 +30,7 @@ class Board {
     }
     subscript(index: Position) -> Cell {
         get {
-            for count in 0..<index.position.count {
+            for count in 0..<index.dimensions {
                 // if any of the dimensions of the requested position are higher than the boundary the cell is dead
                 let position = index.position[count]
                 if let boundary = boundaries[count] {
@@ -40,10 +40,10 @@ class Board {
                 }
             }
             // check if cell exists, if it does, then just return cell, otherwise it's dead and should return a dead cell
-            for cell in cellBoard {
-                if cell.position == index {
-                    return cell
-                }
+            if (cellBoard.contains(Cell(position: index))) {
+                return Cell(position: index)
+            } else if (cellBoard.contains(Cell(position: index, initState: true))) {
+                return Cell(position: index, initState: true)
             }
             return Cell(position: index)
         }
@@ -59,25 +59,19 @@ class Board {
             }
             
             // if the cell already exists, set the cell to the value
-            var inAlready = false
             for cell in cellBoard {
                 if cell.position == index {
                     cell.state = value.state
-                    inAlready = true
                 }
             }
             // if the cell doesn't already exist, we should add all its neighbours too to ensure they are evaluated in the next stage
             outerLoop: for neighbour in index.neighbouringPositions {
-                for cell in cellBoard {
-                    if cell.position == neighbour {
-                        continue outerLoop
-                    }
+                let neighbourCellTrue = Cell(position: neighbour, initState: true)
+                if !self.cellBoard.contains(neighbourCellTrue) {
+                    self.cellBoard.insert(Cell(position: neighbour))
                 }
-                self.cellBoard.append(Cell(position: neighbour))
             }
-            if !inAlready {
-                cellBoard.append(value)
-            }
+            cellBoard.insert(value)
         }
     }
     subscript(index: [Int]) -> Cell {
@@ -89,23 +83,23 @@ class Board {
         }
     }
     
-    init(dimensions: Int, upTo boundaries: [Int?], cellBoard: [Cell] = [Cell](), stepNumber: Int = 0) {
+    init(dimensions: Int, upTo boundaries: [Int?], cellBoard: Set<Cell> = Set<Cell>(), stepNumber: Int = 0) {
         self.dimensions = dimensions
         self.cellBoard = cellBoard
         self.boundaries = boundaries
         self.stepNumber = stepNumber
     }
     
-    convenience init(dimensions: Int, cellBoard: [Cell] = [Cell](), stepNumber: Int = 0) {
+    convenience init(dimensions: Int, cellBoard: Set<Cell> = Set<Cell>(), stepNumber: Int = 0) {
         self.init(dimensions: dimensions, upTo: [Int?](repeatElement(nil, count: dimensions)), cellBoard: cellBoard, stepNumber: stepNumber)
     }
     
     convenience init(dimensions: Int, stepNumber: Int = 0) {
-        self.init(dimensions: dimensions, upTo: [Int?](repeatElement(nil, count: dimensions)), cellBoard: [Cell](), stepNumber: stepNumber)
+        self.init(dimensions: dimensions, upTo: [Int?](repeatElement(nil, count: dimensions)), cellBoard: Set<Cell>(), stepNumber: stepNumber)
     }
     
     func nextStep() -> Board {
-        let nextBoard = Board(dimensions: dimensions, stepNumber: stepNumber+1)
+        let nextBoard = Board(dimensions: dimensions, upTo: boundaries, stepNumber: stepNumber+1)
         
         for cell in cellBoard {
             nextBoard[cell.position] = cell.step(from: self)
@@ -116,17 +110,17 @@ class Board {
     
     func pruneCells() {
         // remove dead cells that definitely remain dead to prevent infinite increase of the board size
-        var prunedBoard = [Cell]()
+        var prunedBoard = Set<Cell>()
         for cell in cellBoard {
             if cell.state {
                 // if the cell is live we should not get rid of it
-                prunedBoard.append(cell)
+                prunedBoard.insert(cell)
                 continue
             }
             for neighbour in cell.position.neighbouringPositions {
                 if self[neighbour].state {
                     // if cell has a live neighbour, it could turn live next step so keep it
-                    prunedBoard.append(cell)
+                    prunedBoard.insert(cell)
                     break
                 }
             }

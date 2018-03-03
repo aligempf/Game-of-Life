@@ -6,9 +6,14 @@
 //  Copyright © 2018 Alistair Gempf. All rights reserved.
 //
 
-class Cell {
+class Cell: Hashable {
     var state: Bool
     let position: Position
+    var hashValue: Int {
+        get {
+            return state ? Set(position.position + [1]).hashValue  : Set(position.position + [0]).hashValue
+        }
+    }
     
     init(position: Position, initState: Bool = false) {
         self.state = initState

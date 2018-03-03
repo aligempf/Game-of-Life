@@ -19,14 +19,18 @@ for x in -maxBoundary/2...maxBoundary/2 {
     }
 }
 //let p = [[0,0],[1,0],[1,1],[0,1]]
-var b = Board(dimensions: 2, upTo: [200, nil])
+var b = Board(dimensions: 2, upTo: [maxBoundary, maxBoundary])
 
 for position in p {
     b[position] = Cell(position: position, initState: true)
 }
-print(stringBoardState(for: b, upTo: 10))
+print(stringBoardState(for: b, upTo: maxBoundary))
 
-for _ in 0..<numSteps {
+while true {
     b = b.nextStep()
-    print(stringBoardState(for: b, upTo: 10))
+    print(stringBoardState(for: b, upTo: maxBoundary))
+    let response = readLine()
+    if response == "q" {
+        break
+    }
 }
