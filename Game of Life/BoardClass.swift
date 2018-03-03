@@ -15,6 +15,18 @@ class Board {
             return cellBoard
         }
     }
+    var maxCellValues: [Int] {
+        var maxCellValues = [Int](repeating: 0, count: dimensions)
+        for cell in self.cellBoard {
+            let position = cell.position.position
+            for dimension in 0..<dimensions {
+                if abs(position[dimension]) > maxCellValues[dimension] {
+                    maxCellValues[dimension] = abs(position[dimension])
+                }
+            }
+        }
+        return maxCellValues
+    }
     subscript(index: Position) -> Cell {
         get {
             for count in 0..<index.position.count {
@@ -65,6 +77,14 @@ class Board {
             if !inAlready {
                 cellBoard.append(value)
             }
+        }
+    }
+    subscript(index: [Int]) -> Cell {
+        get {
+            return self[Position(position: index)]
+        }
+        set(value) {
+            self[Position(position: index)] = value
         }
     }
     

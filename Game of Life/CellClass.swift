@@ -15,6 +15,10 @@ class Cell {
         self.position = position
     }
     
+    convenience init(position: [Int], initState: Bool = false) {
+        self.init(position: Position(position: position), initState: initState)
+    }
+    
     func step(from currentBoardState: Board) -> Cell {
         var liveNeighbours = 0
         var nextStepCell: Cell
