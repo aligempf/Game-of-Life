@@ -98,6 +98,22 @@ class Board {
         self.init(dimensions: dimensions, upTo: [Int?](repeatElement(nil, count: dimensions)), cellBoard: Set<Cell>(), stepNumber: stepNumber)
     }
     
+    convenience init(dimensions: Int, upTo boundaries: [Int?], liveCells positions: [[Int]], stepNumber: Int = 0) {
+        var cellBoard = Set<Cell>()
+        for position in positions {
+            cellBoard.insert(Cell(position: position, initState: true))
+        }
+        self.init(dimensions: dimensions, upTo: boundaries, cellBoard: cellBoard, stepNumber: stepNumber)
+    }
+    
+    convenience init(dimensions: Int, liveCells positions: [[Int]], stepNumber: Int = 0) {
+        var cellBoard = Set<Cell>()
+        for position in positions {
+            cellBoard.insert(Cell(position: position, initState: true))
+        }
+        self.init(dimensions: dimensions, upTo: [Int?](repeatElement(nil, count: dimensions)), cellBoard: cellBoard, stepNumber: stepNumber)
+    }
+    
     func nextStep() -> Board {
         let nextBoard = Board(dimensions: dimensions, upTo: boundaries, stepNumber: stepNumber+1)
         
